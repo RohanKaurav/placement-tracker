@@ -3,7 +3,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prism-client-js"
+  provider = "prisma-client-js"
 }
 
 model User {
@@ -25,7 +25,7 @@ model Question {
   title      String
   url        String
   difficulty String // "EASY", "MEDIUM", "HARD"
-  point      String //10, 20, 30
+  points     Int //10, 20, 30
 
   //Relations
   userProgress UserProgress[]
