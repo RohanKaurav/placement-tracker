@@ -11,7 +11,7 @@ model User {
   username    String   @unique
   college     String
   totalPoints Int      @default(0)
-  solveCount  Int      @default(0)
+  solvedCount Int      @default(0)
   createdAt   DateTime @default(now())
 
   // Relations
