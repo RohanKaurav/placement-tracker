@@ -12,8 +12,14 @@ export async function POST(request: NextRequest) {
               { status: 400 }
             );
         }
+        const updatedStatus = await toggleQuestionSolved(userId, questionId);
+        console.log("Updated solve status:", updatedStatus);
+        return NextResponse.json(
+            updatedStatus ,
+            { status: 200 }
+        );
     }catch(error:any){
-        console.error("POST Solve API Error:", error);
+        console.log("POST Solve API Error:", error);
         return NextResponse.json(
         { error: error.message || "Failed to update solve status." },
         { status: 500 }

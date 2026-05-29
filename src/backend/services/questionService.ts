@@ -52,10 +52,11 @@ export async function getAllQuestionsForUser(userId:string):Promise<QuestionWith
         const question = await prisma.question.findUnique({
             where:{id:questionId}
         })
+        console.log("Toggling solve status for userId:", userId, "questionId:", questionId)
+
         if(!question){
             throw new Error("Question not found")
        }
-
        return prisma.$transaction(async (tx) =>{
             const existingProgress =await tx.userProgress.findUnique({
                 where:{

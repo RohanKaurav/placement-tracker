@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         const statistics = await getUserStatsBreakdown(userId);
         return NextResponse.json(
             statistics,
-            {status :400}
+            {status :200}
         )
     }catch(error:any){
         console.error("GET Stats Breakdown API Error:", error);

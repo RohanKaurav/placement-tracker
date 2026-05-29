@@ -42,12 +42,12 @@ const handleSubmit = async(e:FormEvent) =>{
     })
 
     const data = await response.json();
-    
+    console.log("data comes: ",data);
     if(!response.ok){
       throw new Error(data.message || "Authentication failed");
     }
 
-    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("user", JSON.stringify(data));
     router.push("/dashboard");
 
   }catch(er:any){
