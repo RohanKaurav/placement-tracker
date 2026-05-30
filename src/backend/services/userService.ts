@@ -1,10 +1,11 @@
+import { NullTypes } from "@prisma/client/runtime/client";
 import { prisma } from "../db/prisma";
 
 export interface UserProfile{
     id: string;
-    username:string ;
-    college:string ;
-    email:string;
+    username:string | null;
+    college:string | null;
+    email:string | null;
     totalPoints:number;
     solvedCount:number;
     createdAt: Date;
