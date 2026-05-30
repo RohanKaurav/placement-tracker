@@ -7,13 +7,14 @@ generator client {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  username    String   @unique
-  college     String
-  totalPoints Int      @default(0)
-  solvedCount Int      @default(0)
-  password    String
-  createdAt   DateTime @default(now())
+  id            String    @id @default(uuid())
+  email         String?    @unique  
+  username      String?    @unique         
+  college       String?           
+  image         String?             
+  totalPoints   Int       @default(0)
+  solvedCount   Int       @default(0)
+  createdAt     DateTime  @default(now())
 
   // Relations
   progress  UserProgress[]

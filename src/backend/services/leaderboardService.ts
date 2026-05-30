@@ -33,11 +33,11 @@ export async function getGlobalLeaders(limit=50):Promise<LeaderboardEntry[]>{
     });
     return users.map((user,index)=>({
         rank: index + 1,
-        id: user.id,
-        username: user.username,
-        college: user.college,
-        totalPoints: user.totalPoints,
-        solvedCount: user.solvedCount,
+        id: user?.id,
+        username: user?.username || "no one",
+        college: user?.college || "no one",
+        totalPoints: user?.totalPoints,
+        solvedCount: user?.solvedCount,
     }))
 }
 
@@ -123,7 +123,7 @@ export async function getComparativeWeeklyProgress(userId:string):Promise<Progre
         const label = formatDate(date);
         const point: ProgressChartPoint = { date: label };
         allUsers.forEach(u=>{
-            point[u.username] = 0;
+            point[u?.username || "none"] = 0;
         })
         const nextDay = new Date(date);
         nextDay.setDate(nextDay.getDate() + 1);
@@ -133,8 +133,8 @@ export async function getComparativeWeeklyProgress(userId:string):Promise<Progre
                 const solveTime = new Date(solve.solvedAt).getTime();
                 if(solveTime >= date.getTime() && solveTime < nextDay.getTime()){
                     const username = solve.user.username;
-                    if (point[username] !== undefined) {
-                        (point[username] as number)++;
+                    if (point[username || "none"] !== undefined) {
+                        (point[username || "none"] as number)++;
                       }
             }
         }

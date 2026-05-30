@@ -1,10 +1,10 @@
 import { prisma } from "../db/prisma";
-import bcrypt from "bcryptjs";
+
 export interface UserProfile{
     id: string;
-    username:string;
-    college:string;
-    password:string;
+    username:string ;
+    college:string ;
+    email:string;
     totalPoints:number;
     solvedCount:number;
     createdAt: Date;
@@ -26,38 +26,29 @@ export async function DeleteUser(userId:string):Promise<void>{
     }
     
 }
-export async function authenticateUser(username: string, college: string, password: string): Promise<UserProfile> {
-    const normalizedUsername = username.trim();
-    const normalizedCollege = college.trim();
-    const normalizedPassword = password.trim();
-  
-    if (!normalizedUsername || !normalizedCollege || !normalizedPassword) {
-      throw new Error("Username, college or password cannot be empty");
-    }
-  
-   
-    const existingUser = await prisma.user.findUnique({
-      where: { username: normalizedUsername }
-    });
-  
-    if (existingUser) {
-     
-      const passwordMatch = await bcrypt.compare(normalizedPassword, existingUser.password);
-      if (!passwordMatch) {
-        throw new Error("Wrong password");
+export async function completeUserSetup(userId:string,username: string, college: string): Promise<UserProfile> {
+    if (!username.trim() || !college.trim()) {
+        throw new Error("Username and college cannot be empty");
       }
-      return existingUser;
-  
-    } else {
-      const hashedPassword = await bcrypt.hash(normalizedPassword, 10);
-      return prisma.user.create({
-        data: {
-          username: normalizedUsername,
-          college: normalizedCollege,
-          password: hashedPassword
+    
+      const existing = await prisma.user.findFirst({
+        where: {
+          username: username.trim(),
+          NOT: { id: userId }
         }
       });
-    }
+      if (existing) {
+        throw new Error("Username already taken");
+      }
+    
+      return prisma.user.update({
+        where: { id: userId },
+        data: {
+          username: username.trim(),
+          college: college.trim(),
+        }
+      });
+    
   }
 
 export async function getUserProfile(userId:string):Promise<UserProfile | null>{
