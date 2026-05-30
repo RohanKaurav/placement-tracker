@@ -1,34 +1,64 @@
 import { prisma } from "../db/prisma";
-
+import bcrypt from "bcryptjs";
 export interface UserProfile{
     id: string;
     username:string;
     college:string;
+    password:string;
     totalPoints:number;
     solvedCount:number;
     createdAt: Date;
 }
-
-export async function authenticateUser(username:string, college:string):Promise<UserProfile>{
-    const normalizedUsername= username.trim();
-    const normalizedCollege = college.trim();
-
-    if(!normalizedUsername || !normalizedCollege){
-        throw new Error("Username and college can not be empty ");
-
+export async function DeleteUser(userId:string):Promise<void>{
+    try{
+        const checkUser = await prisma.user.findUnique({
+            where:{id:userId},
+        })
+        if(!checkUser){
+            throw new Error("User not found");
+        }   
+        await prisma.user.delete({
+            where:{id:userId},
+        })
+    }catch(e:any){
+        console.log("Delete User Error: ",e);
+        throw new Error(e.message || "Internal Server Error");
     }
-
-    const user = await prisma.user.upsert({
-        where:{username:normalizedUsername},
-        update:{college:normalizedCollege},
-        create:{
-            username:normalizedUsername,
-            college:normalizedCollege,
-        },
-    });
-
-    return user;
+    
 }
+export async function authenticateUser(username: string, college: string, password: string): Promise<UserProfile> {
+    const normalizedUsername = username.trim();
+    const normalizedCollege = college.trim();
+    const normalizedPassword = password.trim();
+  
+    if (!normalizedUsername || !normalizedCollege || !normalizedPassword) {
+      throw new Error("Username, college or password cannot be empty");
+    }
+  
+   
+    const existingUser = await prisma.user.findUnique({
+      where: { username: normalizedUsername }
+    });
+  
+    if (existingUser) {
+     
+      const passwordMatch = await bcrypt.compare(normalizedPassword, existingUser.password);
+      if (!passwordMatch) {
+        throw new Error("Wrong password");
+      }
+      return existingUser;
+  
+    } else {
+      const hashedPassword = await bcrypt.hash(normalizedPassword, 10);
+      return prisma.user.create({
+        data: {
+          username: normalizedUsername,
+          college: normalizedCollege,
+          password: hashedPassword
+        }
+      });
+    }
+  }
 
 export async function getUserProfile(userId:string):Promise<UserProfile | null>{
     const user = await prisma.user.findUnique({

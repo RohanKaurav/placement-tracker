@@ -2,16 +2,19 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation"; 
 
+
 export default function LandingPage(){
   const router = useRouter()
   const [username, setUsername] = useState("");
   const [college, setCollege] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(()=>{
     const savedUser = localStorage.getItem("user");
     if(savedUser){
+      
       try{
         const user = JSON.parse(savedUser);
         if(user && user.id){
@@ -26,25 +29,26 @@ export default function LandingPage(){
 const handleSubmit = async(e:FormEvent) =>{
   e.preventDefault();
   setError("");
-  if (!username.trim() || !college.trim()) {
+  if (!username.trim() || !college.trim()|| !password.trim()) {
     setError("Please fill in all fields.");
     return;
   }
   setIsLoading(true);
 
   try{
+   
     const response = await fetch("/api/auth",{
       method:"POST",
       headers:{
         "Content-Type":"application/json"
       },
-      body:JSON.stringify({username, college})
+      body:JSON.stringify({username, college, password})
     })
 
     const data = await response.json();
     console.log("data comes: ",data);
     if(!response.ok){
-      throw new Error(data.message || "Authentication failed");
+      throw new Error(data.message || "Password is wrong or username is already taken");
     }
 
     localStorage.setItem("user", JSON.stringify(data));
@@ -175,6 +179,23 @@ const handleSubmit = async(e:FormEvent) =>{
                   value={college}
                   onChange={(e) => setCollege(e.target.value)}
                   placeholder="e.g. IIT Kharagpur"
+                  className="appearance-none block w-full px-4 py-3 border border-zinc-800 rounded-xl bg-zinc-900/60 placeholder-zinc-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="college" className="block text-sm font-semibold text-zinc-300">
+                Password
+              </label>
+              <div className="mt-2 relative">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="strong password e.g. P@ssw0rd!"
                   className="appearance-none block w-full px-4 py-3 border border-zinc-800 rounded-xl bg-zinc-900/60 placeholder-zinc-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-sm"
                 />
               </div>

@@ -21,6 +21,7 @@ interface NavbarProps {
 export default function Navbar({ userStats }: NavbarProps) {
     const router = useRouter();
     const [user, setUser] = useState<UserSession | null>(null);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(()=>{
         const savedUser = localStorage.getItem("user");
@@ -35,6 +36,45 @@ export default function Navbar({ userStats }: NavbarProps) {
             router.push("/");
         }
     },[router])
+
+    useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".profile-dropdown")) {
+          setDropdownOpen(false);
+        }
+      };
+    
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleDelteAccount = async () =>{
+        if(!user) return;
+        if(!confirm("Are you sure you want to delete your account? This action cannot be undone.")){
+            return;
+        }
+        try{
+            const response = await fetch("/api/auth", {
+                method: "DELETE",
+                headers: {  "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: user.id }),
+            }); 
+            if(response.ok){
+                alert("Your account has been deleted successfully.");
+                localStorage.removeItem("user");
+                router.push("/");
+            }else{
+                const errorData = await response.json();
+                console.log("Error response from server: ", errorData);
+                alert(errorData.error || "An error occurred while deleting your account. Please try again later.");
+            }
+        }catch(e){
+            console.log("Error deleting account: ", e);
+            alert("An error occurred while deleting your account. Please try again later.");
+            return;
+        }
+    }
 
     const handleLogout = () =>{
         localStorage.removeItem("user");
@@ -86,9 +126,30 @@ export default function Navbar({ userStats }: NavbarProps) {
 
              
               <div className="flex items-center gap-3 pl-3 border-l border-zinc-900">
-                <div className="text-right hidden md:block">
-                  <div className="text-sm font-semibold text-white">{user.username}</div>
-                  <div className="text-xs text-zinc-500 max-w-[120px] truncate">{user.college}</div>
+              <div className="text-right hidden md:block relative profile-dropdown">
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="text-sm font-medium text-zinc-400 hover:text-white transition duration-200"
+                  >
+                    <div className="text-sm font-semibold text-white">{user.username}</div>
+                    <div className="text-xs text-zinc-500 max-w-[120px] truncate">{user.college}</div>
+                  </button>
+
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-zinc-900 border border-zinc-800 shadow-lg z-50">
+                      <button
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          handleDelteAccount();
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 rounded-xl transition duration-200"
+                      >
+                        🗑️ Delete Account
+                      </button>
+
+                    </div>
+                  )}
+
                 </div>
                 <button
                   onClick={handleLogout}
