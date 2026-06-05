@@ -62,7 +62,7 @@ export default function QuestionCard({
     <div 
       className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border transition-all duration-200 gap-4 ${
         question.isSolved 
-          ? "bg-zinc-900/30 border-zinc-800/60 opacity-80" 
+          ? "bg-zinc-900/30 border-zinc-800/60 opacity-80 " 
           : "bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700/80 hover:bg-zinc-900/80"
       }`}
     >

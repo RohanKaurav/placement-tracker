@@ -17,6 +17,7 @@ export default function NoteModal({
   initialNotes,
   onSave,
 }: NoteModalProps) {
+  
   const [notes, setNotes] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 

@@ -119,6 +119,7 @@ export default function LeaderboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight text-white">Global Leaderboard</h1>
+           
             <p className="text-sm text-zinc-500 mt-1">Compare ranks, scores, and track progress across colleges.</p>
           </div>
           <button

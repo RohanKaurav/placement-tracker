@@ -539,7 +539,9 @@ export default function Dashboard() {
             {/* Leaderboard */}
             <div className="p-6 rounded-2xl glass-panel border border-white/5 space-y-4">
               <div>
+                <button onClick={() => router.push("/leaderboard")} className="text-left">
                 <h2 className="text-md font-bold text-white">Global Leaderboard</h2>
+                </button>
                 <p className="text-xs text-zinc-500 mt-0.5">Top performing students ranking</p>
               </div>
 

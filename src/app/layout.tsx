@@ -26,7 +26,7 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
     >
       <body className="min-h-full flex flex-col">
           <Providers>
-        {children}
+              {children}
           </Providers>
         </body>
     </html>
