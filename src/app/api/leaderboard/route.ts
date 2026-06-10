@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import {getGlobalLeaders} from "../../../backend/services/leaderboardService";
-
 export async function GET(req:NextRequest){
     try{
         const { searchParams } = new URL(req.url);
